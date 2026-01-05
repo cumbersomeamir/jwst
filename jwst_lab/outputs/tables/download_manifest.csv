@@ -1,4 +1,2 @@
 file,obs_id,instrument,filter,product_type,calib_level,size_gb
-/Users/rajeevkumar/Downloads/jwst/jwst_lab/data/products/test_jwst_image_1_i2d.fits,test_obs_1,NIRCAM,F115W,I2D,2,0.003910660743713379
-/Users/rajeevkumar/Downloads/jwst/jwst_lab/data/products/test_jwst_image_2_i2d.fits,test_obs_2,NIRCAM,F200W,I2D,2,0.003910660743713379
-/Users/rajeevkumar/Downloads/jwst/jwst_lab/data/products/test_jwst_image_3_i2d.fits,test_obs_3,NIRCAM,F444W,I2D,2,0.003910660743713379
+data/products/jw01701-o051_t007_nircam_f150w2-f164n_i2d.fits,jw01701-o051_t007_nircam_f150w2-f164n,NIRCAM/IMAGE,F150W2;F164N,I2D,3,0.615

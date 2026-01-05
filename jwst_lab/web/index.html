@@ -511,12 +511,51 @@
             </div>
         </div>
 
+        <!-- Literature Comparison -->
+        <div class="section">
+            <h2>📚 Literature Comparison</h2>
+            <div class="info-box">
+                <strong>Literature Search Results:</strong><br>
+                Searched for published work using similar methodology or reporting similar findings.
+            </div>
+            
+            <h3>Key Findings</h3>
+            <ul style="padding-left: 20px; line-height: 2;">
+                <li><strong>No Identical Methodology Found:</strong> No published papers found using Isolation Forest for JWST anomaly detection</li>
+                <li><strong>Novel Approach:</strong> Our automated anomaly detection pipeline appears to be unique</li>
+                <li><strong>Standard Tools:</strong> JWST community uses standard calibration pipelines, not automated anomaly detection</li>
+                <li><strong>M82 Observations:</strong> M82 is well-studied, but no published results matching our exact methodology</li>
+            </ul>
+            
+            <div class="warning-box">
+                <strong>Important Note:</strong> Our current results are based on <strong>test data</strong> (synthetic sources), 
+                not real JWST observations. The methodology is valid and ready for real data, but cannot be directly 
+                compared with published JWST findings until applied to actual observations.
+            </div>
+            
+            <h3>What Makes Our Work Novel</h3>
+            <ul style="padding-left: 20px; line-height: 2;">
+                <li>Fully automated anomaly detection pipeline for JWST</li>
+                <li>Isolation Forest applied to morphological features</li>
+                <li>Comprehensive verification framework (cross-filter, catalog, PSF)</li>
+                <li>End-to-end reproducibility with configuration files</li>
+                <li>Designed specifically for JWST public data discovery</li>
+            </ul>
+            
+            <p style="margin-top: 20px;">
+                Full literature search report available in: <code>outputs/report/LITERATURE_SEARCH.md</code>
+            </p>
+        </div>
+
         <!-- Footer -->
         <div class="section" style="text-align: center; border: none; background: rgba(74, 158, 255, 0.1);">
             <p style="color: #b0b0b0;">
                 <strong>JWST Anomaly Detection Pipeline</strong><br>
                 Reproducible research pipeline for identifying novel sources in JWST data<br>
-                All results are saved in <code>outputs/</code> directory
+                All results are saved in <code>outputs/</code> directory<br>
+                <span style="font-size: 0.9em; margin-top: 10px; display: block;">
+                    ⚠️ Current results based on test data. Methodology ready for real JWST observations.
+                </span>
             </p>
         </div>
     </div>
