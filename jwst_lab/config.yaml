@@ -1,0 +1,50 @@
+# JWST Research Pipeline Configuration
+
+# Target selection mode: "object" (by name) or "coords" (by coordinates)
+target_mode: "coords"
+
+# Target name (used if target_mode == "object")
+target_name: "M82"
+
+# Coordinates (used if target_mode == "coords")
+ra_deg: 148.968458  # M82 coordinates
+dec_deg: 69.679694
+radius_deg: 0.05  # Search radius in degrees
+
+# Product types to download
+product_types_image: ["I2D"]  # Level 2 image products
+product_types_spectra: ["X1D"]  # Level 2 1D spectra (optional)
+
+# Download limits
+max_obs: 5  # Maximum number of observations to process
+max_files: 60  # Maximum number of files to download
+max_total_gb: 1.0  # Maximum total download size in GB
+
+# Instrument filter (optional, null means all)
+instruments_allowlist: null  # e.g., ["NIRCam", "MIRI", "NIRSpec"] or null for all
+
+# Output formats
+output_formats:
+  figures: true
+  csv: true
+
+# Random seed for reproducibility
+random_seed: 42
+
+# Analysis parameters
+analysis:
+  # Source detection
+  detection_threshold: 3.0  # Sigma threshold for source detection
+  min_snr: 5.0  # Minimum SNR for candidate sources
+  
+  # Anomaly detection
+  top_anomalies_per_image: 30  # Number of top anomalies to extract per image
+  isolation_forest_contamination: 0.1  # Expected fraction of anomalies
+  
+  # Artifact rejection
+  border_pixels: 50  # Reject sources within N pixels of border
+  max_ellipticity: 0.8  # Reject sources with ellipticity > this value
+  
+  # Cutout parameters
+  cutout_size: 50  # Size of cutout in pixels (will create 50x50 cutouts)
+
