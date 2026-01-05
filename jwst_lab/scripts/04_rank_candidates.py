@@ -117,7 +117,7 @@ def rank_candidates():
     combined['composite_score'] = composite_scores
     
     # Sort by composite score
-    combined = combined.sort_values('composite_score', ascending=False, na_last=True)
+    combined = combined.sort_values('composite_score', ascending=False, na_position='last')
     
     # Add rank
     combined['rank'] = range(1, len(combined) + 1)
@@ -192,4 +192,5 @@ def rank_candidates():
 if __name__ == "__main__":
     success = rank_candidates()
     sys.exit(0 if success else 1)
+
 

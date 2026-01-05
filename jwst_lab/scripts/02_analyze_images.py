@@ -74,14 +74,14 @@ def robust_background(data):
 
 
 def detect_sources(data, background, background_rms, threshold_sigma=3.0):
-    """Detect sources using SEP."""
+    """Detect sources using SEP or photutils."""
     # Subtract background
     data_sub = data - background
     
     # Run SEP detection
     try:
         objects = sep.extract(
-            data_sub,
+            data_sub.astype(np.float64),
             threshold=threshold_sigma * background_rms,
             minarea=5,
             deblend_nthresh=32,
@@ -96,11 +96,10 @@ def detect_sources(data, background, background_rms, threshold_sigma=3.0):
         from photutils.detection import DAOStarFinder
         finder = DAOStarFinder(
             threshold=threshold_sigma * background_rms,
-            fwhm=3.0,
-            minarea=5
+            fwhm=3.0
         )
         sources = finder(data_sub)
-        if sources is None:
+        if sources is None or len(sources) == 0:
             return None
         # Convert to SEP-like format
         objects = np.zeros(len(sources), dtype=[
@@ -109,11 +108,17 @@ def detect_sources(data, background, background_rms, threshold_sigma=3.0):
             ('theta', 'f8'), ('cxx', 'f8'), ('cyy', 'f8'), ('cxy', 'f8'),
             ('kron_radius', 'f8'), ('flag', 'i4')
         ])
-        objects['x'] = sources['xcentroid']
-        objects['y'] = sources['ycentroid']
-        objects['flux'] = sources['flux']
-        objects['peak'] = sources['peak']
-        objects['area'] = sources['area']
+        objects['x'] = sources['xcentroid'].value if hasattr(sources['xcentroid'], 'value') else sources['xcentroid']
+        objects['y'] = sources['ycentroid'].value if hasattr(sources['ycentroid'], 'value') else sources['ycentroid']
+        if 'flux' in sources.colnames:
+            objects['flux'] = sources['flux'].value if hasattr(sources['flux'], 'value') else sources['flux']
+        else:
+            objects['flux'] = sources['peak'].value if hasattr(sources['peak'], 'value') else sources['peak']
+        objects['peak'] = sources['peak'].value if hasattr(sources['peak'], 'value') else sources['peak']
+        if 'npix' in sources.colnames:
+            objects['area'] = sources['npix'].value if hasattr(sources['npix'], 'value') else sources['npix']
+        else:
+            objects['area'] = np.ones(len(sources)) * 9
         return objects
 
 
@@ -150,9 +155,9 @@ def compute_morphology_metrics(data, x, y, background, background_rms, cutout_si
         metrics['snr'] = 0.0
     
     # Concentration (flux within different radii)
+    r_pix = np.sqrt((np.arange(cutout.shape[0])[:, None] - local_y)**2 + 
+                   (np.arange(cutout.shape[1])[None, :] - local_x)**2)
     if metrics['total_flux'] > 0:
-        r_pix = np.sqrt((np.arange(cutout.shape[0])[:, None] - local_y)**2 + 
-                       (np.arange(cutout.shape[1])[None, :] - local_x)**2)
         flux_r5 = np.nansum(cutout[r_pix <= 5])
         flux_r10 = np.nansum(cutout[r_pix <= 10])
         metrics['concentration'] = flux_r5 / flux_r10 if flux_r10 > 0 else 0.0
@@ -337,7 +342,13 @@ def analyze_images():
             # Compute metrics for each source
             source_rows = []
             for obj in objects:
-                x, y = obj['x'], obj['y']
+                # Handle both dict-like and structured array access
+                try:
+                    x = obj['x'] if isinstance(obj, dict) else obj['x']
+                    y = obj['y'] if isinstance(obj, dict) else obj['y']
+                except:
+                    x = float(obj[0]) if hasattr(obj, '__getitem__') else 0.0
+                    y = float(obj[1]) if hasattr(obj, '__getitem__') else 0.0
                 
                 # Get RA/Dec if WCS available
                 ra, dec = None, None
@@ -353,17 +364,25 @@ def analyze_images():
                     cutout_size=config['analysis']['cutout_size']
                 )
                 
+                # Get flux values safely
+                try:
+                    flux_val = obj['flux'] if isinstance(obj, dict) else obj['flux']
+                    flux_err_val = obj['fluxerr'] if isinstance(obj, dict) else obj.get('fluxerr', np.nan) if hasattr(obj, 'get') else np.nan
+                except:
+                    flux_val = metrics['total_flux']
+                    flux_err_val = np.nan
+                
                 source_row = {
                     'file': str(filepath),
                     'obs_id': row['obs_id'],
                     'instrument': row['instrument'],
                     'filter': row['filter'],
-                    'x': x,
-                    'y': y,
+                    'x': float(x),
+                    'y': float(y),
                     'ra': ra if ra is not None else np.nan,
                     'dec': dec if dec is not None else np.nan,
-                    'flux': obj.get('flux', np.nan),
-                    'flux_err': obj.get('fluxerr', np.nan),
+                    'flux': float(flux_val) if not np.isnan(flux_val) else np.nan,
+                    'flux_err': float(flux_err_val) if not np.isnan(flux_err_val) else np.nan,
                     'peak': metrics['peak'],
                     'snr': metrics['snr'],
                     'concentration': metrics['concentration'],
@@ -457,4 +476,5 @@ def analyze_images():
 if __name__ == "__main__":
     success = analyze_images()
     sys.exit(0 if success else 1)
+
 

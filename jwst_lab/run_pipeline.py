@@ -19,6 +19,7 @@ SCRIPTS = [
     ("03_analyze_spectra.py", "Analyze Spectra"),
     ("04_rank_candidates.py", "Rank Candidates"),
     ("05_make_report.py", "Generate Report"),
+    ("06_verify_candidates.py", "Verify Candidates"),
 ]
 
 def main():
@@ -89,4 +90,5 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+
 

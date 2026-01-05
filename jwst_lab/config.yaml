@@ -16,7 +16,7 @@ product_types_image: ["I2D"]  # Level 2 image products
 product_types_spectra: ["X1D"]  # Level 2 1D spectra (optional)
 
 # Download limits
-max_obs: 5  # Maximum number of observations to process
+max_obs: 20  # Maximum number of observations to process
 max_files: 60  # Maximum number of files to download
 max_total_gb: 1.0  # Maximum total download size in GB
 
